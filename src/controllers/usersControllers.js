@@ -40,15 +40,10 @@ export const getUser = async (req, res) => {
     const {authorization} = req.headers;
     const token = authorization.slice(7)
     try{
-        const userRegistered = (await getUserByToken(token)).rows[0]
         
+        const userRegistered = (await getUserByToken(token)).rows[0]
         if(!userRegistered) return res.sendStatus(401)
-
-        if (userRegistered.visitCount === null) {
-            userRegistered.visitCount = 0
-            userRegistered.shortenedUrls = []
-        }
-       
+        console.log(userRegistered)
         
         res.send(userRegistered)
     }

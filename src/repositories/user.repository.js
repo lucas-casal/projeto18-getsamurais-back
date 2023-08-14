@@ -24,11 +24,21 @@ export async function insertNewToken(userId, token) {
 
 export async function getUserByToken(token){
     return (await db.query(`
-        SELECT users.id, users.name, SUM(links.views) as "visitCount",
-        json_agg(json_build_object('id', links.id, 'shortUrl', links."shortUrl", 'url', links.url, 'visitCount', links.views, 'nickname', links.nickname) ORDER BY links.id DESC) as "shortenedUrls"
+        SELECT users.id, users.name, users.phone, users.picture,
+        json_agg(json_build_object(
+            'id', services.id, 
+            'mainPhoto', services."mainPhoto", 
+            'title', services.title, 
+            'description', services.description, 
+            'price', services.price, 
+            'phone', services.phone, 
+            'user_id', services.user_id, 
+            'available', services.available,
+            'photo', services.photo) 
+            ORDER BY services.id DESC) as "servicesOffered"
         FROM tokens 
         inner JOIN users ON users.id = tokens.user_id
-        left JOIN links ON links.user_id = tokens.user_id
+        left JOIN services ON services.user_id = tokens.user_id
         WHERE token=$1
         GROUP BY users.id;
         `, [token]))
