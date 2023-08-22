@@ -1,4 +1,4 @@
-import { db } from "../database.js";
+import { db } from "../database/database.js";
 import bcrypt from 'bcrypt'
 
 
@@ -7,14 +7,13 @@ export async function searchUserByToken(token) {
 }
 
 export async function searchUserByEmail(email) {
-    return db.query(`SELECT * FROM users WHERE email=$1`, [email])
+    return await db.query(`SELECT * FROM users WHERE email=$1;`, [email])
 }
 
 export async function insertNewUser(name, email, password, phone, cep, address, complement, picture='') {
     const hash = bcrypt.hashSync(password, 10);
     const arraySent = picture ? [name, email, hash, phone, cep, address, complement, picture] : [name, email, hash, phone, cep, address, complement]
     console.log(arraySent)
-    console.log(`INSERT INTO users (name, email, password, phone, cep, address, complement${picture ? ', picture' : ''}) VALUES ($1, $2, $3, $4, $5, $6, $7${picture ? ', $8' : ''});`)
     return await db.query(`INSERT INTO users (name, email, password, phone, cep, address, "addressComplement"${picture ? ', picture' : ''}) VALUES ($1, $2, $3, $4, $5, $6, $7${picture ? ', $8' : ''});`, arraySent)
 }
 
@@ -33,8 +32,7 @@ export async function getUserByToken(token){
             'price', services.price, 
             'phone', services.phone, 
             'user_id', services.user_id, 
-            'available', services.available,
-            'photo', services.photo) 
+            'available', services.available) 
             ORDER BY services.id DESC) as "servicesOffered"
         FROM tokens 
         inner JOIN users ON users.id = tokens.user_id

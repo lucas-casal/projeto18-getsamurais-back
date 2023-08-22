@@ -1,4 +1,4 @@
-import { db } from "../database.js";
+import { db } from "../database/database.js";
 
 export async function searchLinkByURL(x) {
     return db.query(`SELECT * FROM links WHERE url=$1`, [x])

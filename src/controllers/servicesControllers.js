@@ -1,9 +1,9 @@
-import {db} from '../database.js'
+import {db} from '../database/database.js'
 import { searchUserByToken } from '../repositories/user.repository.js';
 import { deleteLinkById, insertNewService, searchServiceById, updateServiceAvailable } from '../repositories/service.repository.js';
 
 export const addService = async (req, res) =>{
-    const {title, mainPhoto, photo, imagesArray, description, price, phone, available } = req.body;
+    const {title, mainPhoto, imagesArray, description, price, phone, available } = req.body;
     const {authorization} = req.headers;
     
     const token = authorization.slice(7)
@@ -13,7 +13,7 @@ export const addService = async (req, res) =>{
         
         if (!userRegistered) return res.sendStatus(401)
 
-        await insertNewService(userRegistered.user_id, title, mainPhoto, description, price, phone, photo, available)
+        await insertNewService(userRegistered.user_id, title, mainPhoto, description, price, phone, available)
         
         res.sendStatus(201)
     }
